@@ -18,10 +18,17 @@ module.exports = (api, logger) => {
   }
 
   return async (ctx, next) => {
+    const { path, method } = ctx;
     const routerItem = routeList
-      .find((item) => item.regexp.exec(ctx.path) && item.method === ctx.method);
+      .find((item) => item.regexp.exec(path) && item.method === method);
     if (!routerItem) {
+      if (routeList.some((item) => item.regexp.exec(path))) {
+        ctx.throw(405);
+      }
       ctx.throw(404);
+    }
+    if (ctx.logger && ctx.logger.info) {
+      ctx.logger.info(`[${method}] ${path} match: ${routerItem.pathname}`);
     }
     const handleName = fp.compose(
       fp.first,
@@ -29,15 +36,15 @@ module.exports = (api, logger) => {
       fp.keys,
     )(routerItem);
     if (!handleName) {
-      if (logger && logger.error) {
-        logger.error(`pathname: ${routerItem.pathname}, cant handle`);
+      if (ctx.logger && ctx.logger.error) {
+        ctx.logger.error(`pathname: ${routerItem.pathname}, cant handle`);
       }
       ctx.throw(500);
     }
     const handler = routeHandler[handleName];
     if (!handler) {
-      if (logger && logger.error) {
-        logger.error(`pathname: ${routerItem.pathname}, cant handle by ${handleName}`);
+      if (ctx.logger && ctx.logger.error) {
+        ctx.logger.error(`pathname: ${routerItem.pathname}, cant handle by ${handleName}`);
       }
       ctx.throw(500);
     }
