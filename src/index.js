@@ -25,7 +25,17 @@ module.exports = (api, logger) => {
     const routerItem = routeList
       .find((item) => item.regexp.exec(path) && item.method === method);
     if (!routerItem) {
-      if (routeList.some((item) => item.regexp.exec(path))) {
+      const list = routeList.filter((item) => item.regexp.exec(path));
+      if (list.length !== 0) {
+        if (method === 'OPTIONS') {
+          ctx.status = 204;
+          ctx.set(
+            'Access-Control-Allow-Methods',
+            ['OPTIONS', ...list.map((item) => item.method)].join(','),
+          );
+          ctx.body = null;
+          return;
+        }
         ctx.throw(405);
       }
       ctx.throw(404);
