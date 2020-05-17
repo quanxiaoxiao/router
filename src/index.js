@@ -19,7 +19,7 @@ module.exports = (api, logger) => {
 
   return async (ctx, next) => {
     const { path, method, ip } = ctx;
-    if (ctx.logger.info) {
+    if (ctx.logger && ctx.logger.info) {
       ctx.logger.info(`${ip} -> [${method}] ${path}`);
     }
     const routerItem = routeList
