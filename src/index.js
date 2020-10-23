@@ -3,7 +3,6 @@ const { pathToRegexp } = require('path-to-regexp');
 const apiParser = require('@quanxiaoxiao/api-parser');
 const routeHandler = require('@quanxiaoxiao/route-handler');
 
-
 module.exports = (api, logger) => {
   const routeList = apiParser(api)
     .map((item) => ({
@@ -13,14 +12,14 @@ module.exports = (api, logger) => {
 
   if (logger && logger.info) {
     logger.info('---------routerList---------');
-    logger.info(routeList.map((item) => `${item.method} ${item.pathname}`).join('\n'));
+    logger.info(routeList.map((item) => `${item.pathname} \`${item.method}\``).join('\n'));
     logger.info('---------routerList---------');
   }
 
   return async (ctx, next) => {
     const { path, method, ip } = ctx;
     if (ctx.logger && ctx.logger.info) {
-      ctx.logger.info(`${ip} -> [${method}] ${path}`);
+      ctx.logger.info(`${ip} -> ${path} \`${method}\``);
     }
     const routerItem = routeList
       .find((item) => item.regexp.exec(path) && item.method === method);
@@ -47,19 +46,19 @@ module.exports = (api, logger) => {
     )(routerItem);
     if (!handleName) {
       if (ctx.logger && ctx.logger.error) {
-        ctx.logger.error(`[${method}] ${path} @:${routerItem.pathname}`);
+        ctx.logger.error(`${path} \`${method}\` [[${routerItem.pathname}]] handler is not exist`);
       }
       ctx.throw(500);
     }
     const handler = routeHandler[handleName];
     if (!handler) {
       if (ctx.logger && ctx.logger.error) {
-        ctx.logger.error(`[${method}] ${path} @:${routerItem.pathname} ::${handleName}`);
+        ctx.logger.error(`${path} \`${method}\` [[${routerItem.pathname}]] handler @${handleName} is not register`);
       }
       ctx.throw(500);
     }
     if (ctx.logger && ctx.logger.info) {
-      ctx.logger.info(`[${method}] ${path} @:${routerItem.pathname} ::${handleName} `);
+      ctx.logger.info(`${path} \`${method}\` [[${routerItem.pathname}]] @${handleName}`);
     }
     ctx.matchs = routerItem.regexp.exec(ctx.path);
     await handler(routerItem[handleName])(ctx, next);
