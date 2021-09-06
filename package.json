@@ -1,6 +1,6 @@
 {
   "name": "@quanxiaoxiao/router",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "",
   "keywords": [],
   "author": "",
@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@quanxiaoxiao/api-parser": "^0.1.1",
-    "@quanxiaoxiao/route-handler": "0.0.29",
+    "@quanxiaoxiao/route-handler": "0.0.30",
     "lodash": "^4.17.21",
     "path-to-regexp": "^6.2.0"
   },
