@@ -43,7 +43,7 @@ module.exports = (api, logger) => {
         fp.keys,
       )(routerItem);
       if (!handleName) {
-        const errorMessage = `${path} [${method}] \`${routerItem.pathname}\` handler is not exist`;
+        const errorMessage = `${path} [${method}] -> \`${routerItem.pathname}\`, handler is not exist`;
         if (ctx.logger && ctx.logger.error) {
           ctx.logger.error(errorMessage);
         } else {
@@ -53,7 +53,7 @@ module.exports = (api, logger) => {
       }
       const handler = routeHandler[handleName];
       if (!handler) {
-        const errorMessage = `${path} [${method}] \`${routerItem.pathname}\` @${handleName} is not register`;
+        const errorMessage = `${path} [${method}] -> \`${routerItem.pathname}@${handleName}\`,  is not register`;
         if (ctx.logger && ctx.logger.error) {
           ctx.logger.error(errorMessage);
         } else {
@@ -63,7 +63,7 @@ module.exports = (api, logger) => {
       }
       ctx.matchs = routerItem.regexp.exec(path);
       if (ctx.logger && ctx.logger.info) {
-        ctx.logger.info(`${path} [${method}] \`${routerItem.pathname}\` @${handleName}`);
+        ctx.logger.info(`${path} [${method}] -> \`${routerItem.pathname}@${handleName}\``);
       }
       await handler(routerItem[handleName])(ctx, next);
     }

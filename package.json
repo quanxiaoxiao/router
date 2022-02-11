@@ -1,6 +1,6 @@
 {
   "name": "@quanxiaoxiao/router",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "description": "",
   "keywords": [],
   "author": "",
@@ -10,8 +10,8 @@
     "registry": "https://registry.npmjs.org"
   },
   "dependencies": {
-    "@quanxiaoxiao/api-parser": "^0.1.1",
-    "@quanxiaoxiao/route-handler": "0.0.37",
+    "@quanxiaoxiao/api-parser": "^0.1.2",
+    "@quanxiaoxiao/route-handler": "0.0.38",
     "lodash": "^4.17.21",
     "path-to-regexp": "^6.2.0"
   },
@@ -19,9 +19,9 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^7.32.0",
     "eslint-config-airbnb": "^18.2.1",
-    "eslint-plugin-import": "^2.24.2",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-react": "^7.25.1",
-    "eslint-plugin-react-hooks": "^4.2.0"
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-react": "^7.28.0",
+    "eslint-plugin-react-hooks": "^4.3.0"
   }
 }
