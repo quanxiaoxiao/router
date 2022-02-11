@@ -12,15 +12,12 @@ module.exports = (api, logger) => {
 
   if (logger && logger.info) {
     logger.info('---------routerList---------');
-    logger.info(routeList.map((item) => `${item.pathname} \`${item.method}\``).join('\n'));
+    logger.info(routeList.map((item) => `${item.pathname} [${item.method}]`).join('\n'));
     logger.info('---------routerList---------');
   }
 
   return async (ctx, next) => {
-    const { path, method, ip } = ctx;
-    if (ctx.logger && ctx.logger.info) {
-      ctx.logger.info(`${ip} -> ${path} \`${method}\``);
-    }
+    const { path, method } = ctx;
     const routerItem = routeList
       .find((item) => item.regexp.exec(path) && item.method === method);
     if (!routerItem) {
@@ -33,34 +30,42 @@ module.exports = (api, logger) => {
             ['OPTIONS', ...list.map((item) => item.method)].join(','),
           );
           ctx.body = null;
-          return;
+        } else {
+          ctx.throw(405);
         }
-        ctx.throw(405);
+      } else {
+        ctx.throw(404);
       }
-      ctx.throw(404);
-    }
-    const handleName = fp.compose(
-      fp.first,
-      fp.filter((key) => !['method', 'pathname', 'regexp'].includes(key)),
-      fp.keys,
-    )(routerItem);
-    if (!handleName) {
-      if (ctx.logger && ctx.logger.error) {
-        ctx.logger.error(`${path} \`${method}\` [[${routerItem.pathname}]] handler is not exist`);
+    } else {
+      const handleName = fp.compose(
+        fp.first,
+        fp.filter((key) => !['method', 'pathname', 'regexp'].includes(key)),
+        fp.keys,
+      )(routerItem);
+      if (!handleName) {
+        const errorMessage = `${path} [${method}] \`${routerItem.pathname}\` handler is not exist`;
+        if (ctx.logger && ctx.logger.error) {
+          ctx.logger.error(errorMessage);
+        } else {
+          console.error(errorMessage);
+        }
+        ctx.throw(500);
       }
-      ctx.throw(500);
-    }
-    const handler = routeHandler[handleName];
-    if (!handler) {
-      if (ctx.logger && ctx.logger.error) {
-        ctx.logger.error(`${path} \`${method}\` [[${routerItem.pathname}]] handler @${handleName} is not register`);
+      const handler = routeHandler[handleName];
+      if (!handler) {
+        const errorMessage = `${path} [${method}] \`${routerItem.pathname}\` @${handleName} is not register`;
+        if (ctx.logger && ctx.logger.error) {
+          ctx.logger.error(errorMessage);
+        } else {
+          console.error(errorMessage);
+        }
+        ctx.throw(500);
       }
-      ctx.throw(500);
+      ctx.matchs = routerItem.regexp.exec(path);
+      if (ctx.logger && ctx.logger.info) {
+        ctx.logger.info(`${path} [${method}] \`${routerItem.pathname}\` @${handleName}`);
+      }
+      await handler(routerItem[handleName])(ctx, next);
     }
-    if (ctx.logger && ctx.logger.info) {
-      ctx.logger.info(`${path} \`${method}\` [[${routerItem.pathname}]] @${handleName}`);
-    }
-    ctx.matchs = routerItem.regexp.exec(ctx.path);
-    await handler(routerItem[handleName])(ctx, next);
   };
 };
