@@ -1,9 +1,9 @@
-const fp = require('lodash/fp');
-const { pathToRegexp } = require('path-to-regexp');
-const apiParser = require('@quanxiaoxiao/api-parser');
-const routeHandler = require('@quanxiaoxiao/route-handler');
+import { pathToRegexp } from 'path-to-regexp';
+import fp from 'lodash/fp.js';
+import apiParser from '@quanxiaoxiao/api-parser';
+import routeHandler from '@quanxiaoxiao/route-handler';
 
-module.exports = (api, logger) => {
+export default (api, logger) => {
   const routeList = apiParser(api)
     .map((item) => ({
       ...item,
