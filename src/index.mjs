@@ -61,7 +61,9 @@ export default (api, logger) => {
         }
         ctx.throw(500);
       }
-      ctx.matchs = routerItem.regexp.exec(path);
+      const matches = routerItem.regexp.exec(path);
+      ctx.matchs = matches;
+      ctx.matches = matches;
       if (ctx.logger && ctx.logger.info) {
         ctx.logger.info(`${path} [${method}] -> \`${routerItem.pathname}@${handleName}\``);
       }
