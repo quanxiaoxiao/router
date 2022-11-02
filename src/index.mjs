@@ -10,10 +10,10 @@ export default (api, logger) => {
       regexp: pathToRegexp(item.pathname),
     }));
 
-  if (logger && logger.info) {
-    logger.info('---------routerList---------');
-    logger.info(routeList.map((item) => `${item.pathname} [${item.method}]`).join('\n'));
-    logger.info('---------routerList---------');
+  if (logger && logger.warn) {
+    logger.warn('---------routerList---------');
+    logger.warn(routeList.map((item) => `${item.pathname} [${item.method}]`).join('\n'));
+    logger.warn('---------routerList---------');
   }
 
   return async (ctx, next) => {
